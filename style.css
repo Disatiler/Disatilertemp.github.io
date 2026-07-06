@@ -101,7 +101,7 @@ body {
 
 .btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(79,140,255,.35);
+    box-shadow: 0 10px 25px rgba(7, 13, 25, 0.35);
 }
 
 .secondary {
@@ -158,6 +158,8 @@ body {
 
 .card h2 {
     margin-bottom: 15px;
+
+    color: #ff9e4f;
 }
 
 /* PROJECTS */
@@ -218,7 +220,7 @@ body {
 }
 
 .skills span {
-    background: rgba(79,140,255,.12);
+    background: rgba(2, 54, 151, 0.12);
 
     color: #8ab4ff;
 
@@ -291,4 +293,54 @@ footer {
         text-align: center;
     }
 
+}
+
+/* 🌞 Style clair */
+[data-theme="light"] {
+	--bg-color: #ececec;
+	--text-color: #212121;
+}
+
+/* 🌚 Style sombre */
+[data-theme="dark"] {
+	--bg-color: #212121;
+	--text-color: #ececec;
+}
+
+.menu {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(100%);
+}
+
+/* .menu {
+    position: sticky;
+    top: 50vh;
+    transform: translateY(-50%);
+} */
+
+.menu ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu li {
+    margin: 15px 0;
+}
+
+.menu a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    background: #333;
+    color: white;
+    border-radius: 6px;
+}
+
+.menu a:hover {
+    background: #555;
 }

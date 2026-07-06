@@ -1,0 +1,567 @@
+```index.html```
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Your Name</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Optional: Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+%% stryle.css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #0f1117;
+    --surface: #171b22;
+    --surface-hover: #202632;
+    --text: #f3f4f6;
+    --muted: #9ca3af;
+    --accent: #4f8cff;
+    --border: #2a2f3b;
+
+    --radius: 16px;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+}
+
+.container {
+    width: min(900px, 92%);
+    margin: auto;
+    padding: 80px 0;
+}
+
+/* HERO */
+
+.hero {
+    text-align: center;
+    margin-bottom: 70px;
+}
+
+.avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+
+    border: 4px solid var(--surface);
+
+    margin-bottom: 25px;
+
+    transition: .3s;
+}
+
+.avatar:hover {
+    transform: scale(1.05);
+}
+
+.hero h1 {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.description {
+    color: var(--muted);
+    max-width: 650px;
+    margin: auto;
+}
+
+/* BUTTONS */
+
+.buttons {
+    margin-top: 35px;
+
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    text-decoration: none;
+
+    color: white;
+    background: var(--accent);
+
+    padding: 12px 26px;
+
+    border-radius: 12px;
+
+    transition: .25s;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(79,140,255,.35);
+}
+
+.secondary {
+    background: var(--surface);
+}
+
+.secondary:hover {
+    background: var(--surface-hover);
+}
+
+/* SOCIALS */
+
+.socials {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 18px;
+
+    margin-bottom: 60px;
+}
+
+.socials a {
+    color: var(--muted);
+    text-decoration: none;
+    transition: .25s;
+}
+
+.socials a:hover {
+    color: white;
+}
+
+/* CARDS */
+
+.card {
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    padding: 28px;
+
+    margin-bottom: 30px;
+
+    box-shadow: var(--shadow);
+
+    transition: .3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card h2 {
+    margin-bottom: 15px;
+}
+
+/* PROJECTS */
+
+#projects h2 {
+    margin-bottom: 20px;
+}
+
+.project-grid {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+
+    gap: 20px;
+
+    margin-bottom: 40px;
+}
+
+.project-card {
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    padding: 24px;
+
+    transition: .3s;
+}
+
+.project-card:hover {
+    background: var(--surface-hover);
+
+    transform: translateY(-6px);
+}
+
+.project-card h3 {
+    margin-bottom: 12px;
+}
+
+.project-card p {
+    color: var(--muted);
+    margin-bottom: 18px;
+}
+
+.project-card a {
+    text-decoration: none;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+/* SKILLS */
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.skills span {
+    background: rgba(79,140,255,.12);
+
+    color: #8ab4ff;
+
+    padding: 8px 14px;
+
+    border-radius: 999px;
+
+    font-size: .9rem;
+
+    border: 1px solid rgba(79,140,255,.25);
+}
+
+/* SECTION SPACING */
+
+section {
+    margin-bottom: 60px;
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+
+    color: var(--muted);
+
+    margin-top: 80px;
+}
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0f1117;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2f3542;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4f8cff;
+}
+
+/* SELECTION */
+
+::selection {
+    background: var(--accent);
+    color: white;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 220px;
+        text-align: center;
+    }
+
+}
+
+
+=================
+
+
+<body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Matthieu ROBEYNS</title>
+
+        <link rel="stylesheet" href="style.css">
+
+        <!-- Optional: Inter font -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
+    </head>
+
+    <main class="container">
+
+        <!-- Hero -->
+        <section class="hero">
+            <!-- <img src="images/profile.jpg" alt="Profile Picture" class="avatar"> -->
+
+            <h1>Matthieu ROBEYNS</h1>
+
+            <p class="subtitle">
+                Postdoctoral Researcher
+            </p>
+        </section>
+
+        <section class="card">
+            <h2>About</h2>
+            <p>
+                Postdoctoral Researcher at
+
+                <a href="https://www.enseeiht.fr/fr/index.html">
+                    ENSEEIHT (Toulouse)
+                </a> (France).
+                <br>
+                Former member of
+                <a
+                    href="https://www.lisn.upsaclay.fr/recherche/departements-et-equipes/algorithmes-apprentissage-et-calcul/systemes-paralleles-parsys/">
+                    ParSys team
+                </a>
+                at <a HREF="https://www.lisn.upsaclay.fr/">Laboratoire
+                    Interdisciplinaire des Sciences du
+                    Numérique (LISN)</a>
+            </p>
+        </section>
+
+        <div class="buttons">
+            <a href="#projects" class="btn">Projects</a>
+            <a href="#contact" class="btn secondary">Contact</a>
+        </div>
+
+        <!-- Social Links -->
+        <section class="socials">
+            <a href="#">GitHub</a>
+            <a href="#">GitHub</a>
+            <a href="#">Email</a>
+        </section>
+
+        <!-- About -->
+        <section class="card">
+            <h2>About</h2>
+            <p>
+                Passionate developer who enjoys building scalable applications,
+                experimenting with new technologies, and creating clean user
+                experiences.
+            </p>
+        </section>
+
+        <!-- Projects -->
+        <section id="projects">
+            <h2>Projects</h2>
+
+            <div class="project-grid">
+
+                <article class="project-card">
+                    <h3>Portfolio</h3>
+                    <p>
+                        Personal website showcasing projects and blog posts.
+                    </p>
+                    <a href="#">View →</a>
+                </article>
+
+                <article class="project-card">
+                    <h3>Dashboard</h3>
+                    <p>
+                        Modern analytics dashboard built with React and Node.js.
+                    </p>
+                    <a href="#">View →</a>
+                </article>
+
+                <article class="project-card">
+                    <h3>Open Source</h3>
+                    <p>
+                        Collection of useful libraries and developer tools.
+                    </p>
+                    <a href="#">View →</a>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- Skills -->
+        <section class="card">
+            <h2>Tech Stack</h2>
+
+            <div class="skills">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>JavaScript</span>
+                <span>TypeScript</span>
+                <span>React</span>
+                <span>Node.js</span>
+                <span>Python</span>
+                <span>Docker</span>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="card">
+            <h2>Contact</h2>
+
+            <p>
+                Interested in collaborating or have a project in mind?
+            </p>
+
+            <a href="mailto:hello@example.com" class="btn">
+                Say Hello
+            </a>
+        </section>
+
+    </main>
+</body>
+
+
+<!-- <HTML>
+
+<HEAD>
+    <TITLE> Rick Home Page </TITLE>
+
+<BODY BGCOLOR="#FFFFFF">
+    <PRE><H2>    Rick, PhD.
+    </H2></PRE>
+    </HEAD>
+
+    <BODY>
+        <b> Post-Doc at
+
+            <a href="https://www.enseeiht.fr/fr/index.html">
+                ENSEEIHT (Toulouse)
+            </a> (France)
+
+        <TABLE width="100%" cellpadding=0 cellspacing=0>
+            <TR ALIGN=LEFT>
+                <TD>
+                    <BR>
+                    <EM>
+                        Former member of
+                        <a
+                            href="https://www.lisn.upsaclay.fr/recherche/departements-et-equipes/algorithmes-apprentissage-et-calcul/systemes-paralleles-parsys/">
+                            ParSys team
+                        </a>
+                        at <A HREF="https://www.lisn.upsaclay.fr/">Laboratoire Interdisciplinaire des Sciences du
+                            Numérique (LISN)</A>
+                    </EM>
+                    <BR>
+                    <BR>
+                    Former E-mail: <A>temp.temp [at] universite-paris-saclay.fr
+                        (temp.temp@universite-paris-saclay.fr)</A><BR>
+                    <BR>
+                    <BR>
+                        Actual E-mail: <A>temp.temp [at] irit.fr
+                            (temp.temp@irit.fr)</A><BR>
+                    <BR>
+
+                    <hr>
+                    <H2>Research Interests</H2>
+
+                    <UL>
+                        <LI> Tensors decomposition and applications
+                        <LI> Numerical linear algebra and software
+                        <LI> High-performance computing
+                    </UL>
+
+                    <hr>
+
+                    <H2>Papers</H2>
+
+                    <UL>
+                        <li>
+                            M. Baboulin, S. Donfack, O. Kaya, T. Mary, M. Robeyns <br>
+                            <b> Mixed precision randomized low-rank approximation with GPU tensor cores.
+                            </b>
+                            <br>
+                            <b>Proceedings of the Euro-PAR 2024 Conference</b>,
+                            Lecture Notes in Computer Science, Springer, Vol. 14803, pp. 31-44 (2024), <a
+                                href="https://hal.science/LISN/hal-04520893v1"> HAL Paper</a>. <br>
+                            <a href="https://link.springer.com/chapter/10.1007/978-3-031-69583-4_3">Springer book</a> </li>
+                        <li>
+                            M. Baboulin, O. Kaya, T. Mary, M. Robeyns <br>
+                            <b> Mixed precision iterative refinement for low-rank matrix and tensor approximations.
+                            </b>
+                            <br>
+                            Lecture Notes in SIAM Journal on Scientific Computing , Vol. 47, Iss. 5 (2025), pp. A2403-C1171<a
+                                href="https://hal.science/hal-04115337v1/file/Paper.pdf"> HAL Paper</a>. <br>
+                            <a href="https://epubs.siam.org/doi/abs/10.1137/23M1576992">SIAM book</a> </li>
+                    </UL>
+                    <hr>
+
+                    <H2>Talks</H2>
+
+                    <UL>
+                        <li> <a href="file:///home/robeyns/Desktop/Personnel/Disatilertemp.github.io/Talks/2025_Slide_Padova.pdf">A parallel approach for solving the Green’s function based on the nested-dissection a and selected-inverse methods</a> (HPCSIM, Padova, September 2025). </li>
+                        <li> <a href="file:///home/robeyns/Desktop/Personnel/Disatilertemp.github.io/Talks/2024_SIAM_LA.pdf">A general framework for the stable rounding of low-rank tensors with error analysis</a> (SIAM LA, Paris, May 2024). </li>
+                        <li> <a href="file:///home/robeyns/Desktop/Personnel/Disatilertemp.github.io/Talks/2024_EuroPar.pdf">Mixed precision randomized low-rank approximation with GPU tensor cores</a> (Euro-PAR, Madrid, August 2024). </li>
+                        <li> <a href="file:///home/robeyns/Desktop/Personnel/Disatilertemp.github.io/Talks/2023_SIAM_CSE.pdf">Mixed Precision Iterative Refinement for Low-Rank Matrix and Tensor Approximations</a> (SIAM CSE, Amsterdam, Feburary 2023). </li>
+                    </UL>
+                    <hr>
+
+                    <!-- <H2>Submitted Articles</H2>
+
+                    <UL>
+                        <li> Baboulin, Marc and Kaya, Oguz and Mary, Théo and Robeyns, Matthieu (2023).<br> 
+                            <b> Mixed precision iterative refinement for low-rank matrix and tensor approximations</b>. <br>
+                            Submitted in: <em> SIAM Journal on Scientific Computing</em>. <a href="https://inserm.hal.science/INRIA/hal-04115337v1">HAL Paper</a>
+                        <li> Baboulin, Marc and Kaya, Oguz and Mary, Théo and Robeyns, Matthieu (2024). <br>
+                            <b> Numerical stability of tree tensor network operations, and a new stable rounding algorithm</b>. <br>
+                            In progress: <em> SIAM Journal on Scientific Computing</em>.
+                    </UL>
+                    <hr> -->
+
+<!-- <H2>Teaching</H2>
+
+                    <UL>
+                        <li> 2021 -- 2022 <br>
+                            L3 Programmation parallèle <br>
+                        <li> 2022 -- 2023 <br> 
+                            M1 QDCS Calcul haute performance <br>
+                            M1 IoT Programmation MPI <br>
+                            L3 Programmation parallèle <br>
+                        <li> 2023 -- 2024 <br> 
+                            APP4 Polytech - Programmation parallèle <br>
+                            M1 IoT Programmation MPI <br>
+                            
+                    </UL>
+                    <hr>
+                    <H2>Supervision</H2>
+                        <li> May -- Jul. 2023 Supervise a M1 internship on the integration of the MPLAPACK library in Celeste to be able to simulate mixed precision algorithms.
+                        <P> -->

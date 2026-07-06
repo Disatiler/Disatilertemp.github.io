@@ -1,0 +1,287 @@
+Les problèmes émergents des domaines physiques, quantiques ou biologiques
+deviennent de plus en plus coûteux que ce soit en resources et en temps. Le
+calcul haute-performance peut résoudre les problèmes de temps via la
+paralléllisation ou l'utilisation d'architecture moderne (GPUs, accélérateur).
+Pour l'aspect consommation de mémoire, les expressions d'algébre linéaire
+peuvent simplifier, voir réduire la taille des objets traités, de telle sorte
+que le problème soit calculable sur un ordinateur et correct algébriquement.
+Ces méthodes sont très exploitées dans le domaine matriciel mais très peu dans
+le domaine tensoriel.
+
+Le projet de recherche proposé est d'étendre l'aspect haute-performance aux
+applications tensorielles. Afin de réduire leur empreinte mémoire par les
+méthodes d'algébre matricielle et/ou tensorielle. Cela reviendra à utiliser des
+méthodes d'approximation et de compression, dites stables, sur différents types
+de tenseur, que ce soit en précision uniforme ou mixte.
+
+Une autre approche sur la façon de réduire l'utilisation de la mémoire peut
+être envisagé pour les matrices creuses. Cette idée consiste à stocker
+uniquement les indices de lignes ou de colonnes mais pas les deux à la fois.
+Ainsi un vecteur d'index sera économisé. L'intuition est d'utiliser un vecteur
+de vecteurs pour stocker les indices où chaque vecteur représentera soit les
+lignes ou les colonnes. Ainsi une unicité des valeurs est maintenue dans chaque
+vecteur et surtout l'ordre des valeurs n'importe plus (rendant beaucoup plus
+d'algorithme plus applicable).
+
+\subsubsection*{Résumé :}
+
+Mon projet de recherche propose d'améliorer les applications tensorielles en
+utilisant des techniques de calcul haute-performance et de précision mixte.
+\begin{itemize}
+    \item[\textbf{Axe 1 :}] Étudier les calculs parallèles dans le domaine tensoriel, principalement via des approximations de rang faibles (HOSVD, etc...) stables et de l'utilisation de précision mixte (FP16-FP32, etc...).
+    \item[\textbf{Axe 2 :}] Utilisation d'une nouvelle approche de stockage des éléments pour une matrice creuse, via un seul vecteur d'indices.
+\end{itemize}
+
+\subsection{Compression et précision mixte sur les tenseurs}
+
+Les tenseurs~\cite{koba09} sont la généralisation des matrices à l'ordre
+supérieur de deux, et sont très utilisés dans les domaines de
+physiques~\cite{apda81, vate07}, quantiques, et dans le signal
+processing~\cite{sdfh17, co14}. Le problème émanant des tenseurs vient de la
+taille des éléments à stocker qui est exponnentielle par rapport à l'ordre du
+tenseur, ce problème est appelé \textit{curse of dimensionality}. La
+``malédiction de la dimensionalité'' peut être résolue en appliquant des
+méthodes de compressions qui transforment le tenseur original en tenseurs de
+petites dimensions pour être calculé sur ordinateur; comme le fait le format
+CP~\cite{koba09}.
+
+\subsubsection*{Approche sur les méthodes itératives}
+
+La méthode pour obtenir un tenseur au format CP, nommé CP-ALS, est une méthode
+itérative donc nous n'avons pas de garantie de convergence. Cette analyse de
+convergence est encore à ce jour très étudiée~\cite{ylc25}, mais peu dans le
+domaine de la précision mixte~\cite{yashzh22}. Une approche serait de faire les
+premières étapes de la fonction CP-ALS en faible précision (e.g. \textit{half}
+précision -- fp16) pour récupérer les premières valeurs singulières pour
+comprimer le tenseur. Une fois l'itération courante au niveau de la tolérance
+prescrite par la précision de calcul (e.g. $\epsilon \simeq 1e-5$ pour
+\textit{half}), les prochaines itérations sont calculées en précision plus
+haute et ainsi de suite jusqu'à atteindre la précision finale attendue.
+L'analyse de convergence est l'assurance que la tolérance sera atteinte et
+démontrée dans ces papiers~\cite{golub65,blmv25}. Il est intéressant de noter
+que même si la convergence en faible précision demande plus d'itération,
+puisque celles-ci sont en faible précision, elles sont moins coûteuses, que ce
+soit en mémoire et en calcul, spécifiquement avec les nouvelles générations de
+GPU tensor cores intégrant des calculs en précision mixte tels que le
+FP16-FP32. Cette approche a été étudiée durant ma thèse mais sans aboutir par
+manque de temps.
+
+Une autre approche serait d'appliquer un sketch via les méthodes randomisées
+sur le tenseur et potentiellement à chaque itération pour aller plus loin que
+l'état de l'art~\cite{bbk18}.
+
+\subsubsection*{Approche sur les méthodes directes}
+
+D'autres formats de compression de tenseur existent tels que le
+Tucker~\cite{tucker66, dedeva20b}, tensor-train~\cite{os11}, et hierarchical
+Tucker~\cite{haku09, gras10} formats. Celles-ci peuvent s'obtenir depuis un
+tenseur plein par une \textit{low-rank approximation}~\cite{koba09, os11}, tel
+que HOSVD pour le Tucker format, TT-SVD pour tensor-train, et HT-SVD pour le
+hierarchical Tucker. Chacune de ces méthodes sont directes, ce qui donne une
+quasi-optimal approximation après un appel de ces fonctions. Ces méthodes
+peuvent ainsi profiter d'un raffinnement itératif avec un contexte de précision
+mixte commencant par de la faible précision jusqu'à atteindre la haute
+précision. L'approximation restera stable par le fait que les approximations
+sont révélateurs de rang, assurant ainsi une stabilité de ces méthodes.
+
+Pour être plus précis, l'approche envisagée est de montrer que les méthodes
+d'approximations sont équivalentes et spécifiques à la structure qu'ils ont en
+entrée. Pour confirmer cette idée, nous pouvons nous concenter sur le format le
+plus global, qui est le format Tucker hiérarchique (hierarchical Tucker), et
+démontrer que sa méthode de compression HT-SVD est identique à celle du format
+Tucker de base pour un Tucker hiérarchique avec un seul parent. Le principe est
+le même pour le format tensor-train en partant du format Tucker hiérarchique.
+
+Une fois cette idée confirmée et prouvée, nous peaufinnerons la méthode HT-SVD
+avec des optimisations possibles tels que l'ordre des contractions des noeuds
+du tensor. Ainsi nous pourrons étendre la méthode à des formats plus étendus
+que les Tucker hiérarchique en comprimant certains de leur noeuds pour nous
+retrouver dans un cas favorable.
+
+\subsection{Nouveau framework sur les matrices creuses}
+
+Les matrices creuses sont très utilées en informatique pour leur faible
+consommation mémoire et les formats structurés des matrices qu'ils décrivent.
+Actuellement, l'optimisation mémoire est de stocker uniquement les indices
+lignes $i$ et colonnes $j$ tels que la matrice est non nul $A_{i,j} \neq 0$. La
+contrainte de cette façon est de stocker deux vecteurs d'indices $v_i$, $v_j$
+avec les indexes ordonnés selon les lignes ou colonnes et un même indice donné
+pour ne pas avoir de corruption de lecture. C'est-à-dire, si $A_{i,j} \neq 0$
+alors $i$ et $j$ doivent être au même indice $k$ dans $v_i$ et $v_j$
+respectivement, sinon si $v_j[k] = j+1$ alors $A_{v_i[k],v_j[k]} = A_{i,j+1}$
+qui peut être nulle. Le désavantage de cette technique est l'ajout d'un élément
+dans la matrice, il faut insérer l'index de cet élément $l$ dans les deux
+vecteurs à l'indice $k_l$; or l'insertion d'un élément dans un vecteur est très
+coûteux.
+
+L'approche proposée est d'utiliser un vecteur possédant lui même les vecteurs
+correspondant aux indices de la dimension la plus grande. Ainsi pour une
+matrice $A\in \mathbb{R}^{5\times 4}$ nous avons la configuration suivante : $$
+    A =
+    \begin{bmatrix}
+        a_{0,0} & 0       & 0       & 0       \\
+        0       & 0       & a_{1,2} & 0       \\
+        0       & 0       & 0       & 0       \\
+        0       & a_{3,1} & 0       & 0       \\
+        0       & 0       & a_{4,2} & a_{4,3} \\
+    \end{bmatrix}
+    \Rightarrow
+    v_{ji} = [[0],[3],[1,4],[4]] \text{ ou } v_{ij} = [[0],[2],[],[1],[2,3]]
+    % \begin{cases}
+    % v_i = [0,1,3,4,4]\\
+    % v_j = [0,2,1,3,4]
+    % \end{cases}
+$$,
+comparé au résultat précédent qui serait $v_i = [0,1,3,4,4], v_j = [0,2,1,2,3]$.
+
+Les inconvénients de cette méthode sont les suivantes :
+\begin{itemize}
+    \item Le stockage reste dynamique, pas optimal en mémoire.
+    \item Allocation inutile de vecteur vide, qui peut devenir un surcoût non négligeable
+          sur de très grandes matrices.
+\end{itemize}
+À contrario, les avantages sont les suivants :
+\begin{itemize}
+    \item La taille de chaque sous-vecteur peut être préalloué au max d'éléments d'une
+          dimension si nécessaire.
+    \item L'ordre des éléments dans un sous-vecteur n'importe pas.
+    \item L'ajout d'un élément non nul est beaucoup plus rapide et moins coûteux.
+    \item Le format est plus propice à la parallélisation.
+\end{itemize}
+
+Pour montrer l'intuition derrière voici l'affichage du temps et de la mémoire
+de l'exemple énoncé au-dessus. Nous pouvons constater que $v_i$ et $v_j$ ne
+coûte que $192$ bytes au total comparé à $v_{ji}$ qui en coûte $368$. Mais pour
+l'insertion d'un élément nous avons uniquement $96$ bytes comparé à $448$ pour
+chaque vecteurs.
+
+\begin{figure}
+    \center
+    \includegraphics[scale=0.5]{ExampleJulia.png}
+\end{figure}
+
+\subsection{Intégration dans l'équipe \equipe}
+
+\begin{comment}
+%% Strasbourg %%
+Bien que le premier projet de recherche sur les calculs tensoriels ne s'intégre
+pas nécessairement dans les axes principaux de l'équipe \equipe, le second
+projet par contre se voit plus abordable. En effet, l'idée de revoir la façon
+de stocker les éléments d'une matrice se rapproche très fortement des travaux
+de Cédric Bastoul~\cite{glb20} sur la direction de lecture des éléments d'une
+matrice.
+
+Les aspects de parallélisation sur les deux projets peuvent être étudiés avec
+Béranger Bramas, qui travaillant aussi sur le Projet Exasoft, possède les
+compétences nécessaires sur les systèmes d'ordonnancements tels que StarPU pour
+efficacement exécuter les tâches sur les tenseurs. Ayant principalement utilisé
+StarPU, et participé aux AG Numpex, je pense que Béranger pourra élargir ma
+vision sur les modèles générés à base de tâches en m'initiant à Specx le modèle
+qu'il développe actuellement~\cite{cb25}.
+
+Pour le projet sur les tenseurs, je pensais faire l'implémentation en C, mais
+plus précisement en C++. En effet, les avantages de compilation et de nouvelles
+options apportées par C++ me conforte dans une implémentation élégante et très
+maniable du code. De plus, dans l'équipe il y a Jens Gustedt, un expert du
+langage C voir même du C moderne, qui pourra m'aiguiller sur la façon dont je
+voudrais faire les templates pour les tenseurs (voir même les contrats).
+
+Au niveau de la vérification de code, mon domaine d'expertise n'est pas très
+grand, c'est pourquoi je voudrais beaucoup collaborer avec Arthur Charguéraud
+sur le sujet.
+%% Strasbourg %%
+\end{comment}
+
+\begin{comment}
+%% Paris %%
+Durant ma thèse j'ai fréquemment travaillé avec l'équipe Pequan. J'ai participé
+à des réunions d'équipe et ai pu voir arriver de nouveaux permanents tel que
+Pierre Jolivet. Mes travaux de thèse sont en lien direct avec ceux de Théo Mary
+sachant qu'il a été un de mes encadrants de thèse. La grande partie de mon
+expérience sur la précision mixte et le calcul d'approximation provient de ses
+travaux~\cite{bmp24,blmv25}. Cependant, les sujets étudiés durant ma thèse mais
+non traités pourront être réalisés au sein de cette équipe. Avec la
+collaboration de Fabienne Jézéquel et Stef Graillat, travaillant sur l'aspect
+de validation numérique des applications et de leur robustesse aux faibles
+précisions (avec \href{https://promise.lip6.fr/}{PROMISE}), je pourrais étendre
+le projet de recherche sur les tenseurs sur des modèles de précision cible
+(custom) avec une grande fiabilité numérique.
+
+Le projet portant sur le stockage de matrice ne possède pas de lien direct avec
+des membres de l'équipe mais reste très proche du domaine sachant qu'il vise à
+optimiser le stockage mémoire et donc rendre aussi les transferts de données
+moins coûteux, ce qui implique une meilleur efficacité pour des exécutions
+parallèles. Pourtant, je pourrais tirer partie de leur application ou ``cas
+test'' d'exécution pour vérifier si l'idée peut converger sur une nouvelle
+méthode de stockage de matrice. Les expériences pourront être vues avec
+Dominique Béréziat, travaillant dans l'assimilation de données et le traitement
+d'images sur des applications météorologiques~\cite{gabc26} (avec l'outil
+GloFM). Ses domaines d'études utilisent souvent des matrices creuses dont le
+projet pourrait en tirer partie.
+
+Pour le projet sur les tenseurs, je pensais faire l'implémentation en C, mais
+plus précisement en C++. En effet, les avantages de compilation et de nouvelles
+options apportées par C++ me conforte dans une implémentation élégante et très
+maniable du code. De plus, Pierre Jolivet possède une grande connaissance dans
+le langage C en tant que développeur principal de
+\href{https://petsc.org/release/}{PETSc}, ainsi il pourra m'aiguiller sur la
+façon de rendre le code portable pour tous les utilisateurs venant de
+différents domaines d'application (physique, quantique, etc...).
+
+Au sein de cette équipe je pourrais apporter une nouvelle vision de la
+recherche à l'aide du calcul tensoriel. Ainsi, diverses collaborations avec des
+applications physiques pourraient aboutir. Je pourrais aussi m'intégrer dans
+les projets déjà existants tels que ceux présents dans le labo, à savoir
+\href{https://promise.lip6.fr/}{PROMISE} ou
+\href{https://petsc.org/release/}{PETSc}.
+%% Paris %%
+\end{comment}
+
+% \begin{comment}
+%% Lyon %%
+Durant ma thèse, j'ai principalement enseigné pour des L3 et des M1/M2 dans des
+unités d'enseignement telles que la programmation parallèle et distribuée, via
+OpenMP et MPI. La partie théorique était souvent accompagnée d'une partie
+pratique avec soit des applications physiques, comme la résolution d'EDP, soit
+des architectures récentes telles les machines du cluster Jean Zay.
+
+En discutant avec Michele Pagani, j'ai appris que l'équipe \equipe se tourne
+vers des enseignements plus applicatifs. Or, durant mon post-doctorat j'ai créé
+un projet pratique nommé ``Projet Calcul Scientifique : Matrices randomisées et
+leur utilisations pour les approximations de rang faible'' en collaboration
+avec un collègue de mon équipe, Ronan Guivarch. Grâce à ces expériences je
+pense pouvoir aider l'équipe \equipe dans la création ou le soutien de projets
+pratiques pour des licences 3 ou des masters, voire enseigner dans des unités
+hors de mon domaine comme celles de la théorie des graphes ou de la dynamique
+probabilistique des modèles discrets enseignée par Éric Thierry.
+
+Ayant un bagage sur l'optimisation des performances, j'ai collaboré avec
+Mathieu Faverge et Emmanuel Agullo pour améliorer les librairies Chameleon et
+StarPU sur les matrices structurées. De plus, sur la résolution de matrice
+creuse, j'ai aussi cotoyé des chercheurs tels que Patrick Amestoy, qui
+travaille sur MUMPS. Ainsi, je pourrai fournir des nouveaux sujets d'études sur
+des librairies open source et optimisées comme celle susmentionnée qui pourront
+mener à des propositions de thèse ou de recherche sur des optimisations ou sur
+des applications dans des domaines externes tels que la physique.
+
+J'aimerais aussi favoriser la diversité des langages de programmation dans les
+enseignements pour élargie les possibiltés de recherche des étudiants, qu'elles
+soient locales ou à l'étranger. C'est pourquoi mon expertise dans les langages
+comme C/C++, Julia, Matlab me conforte dans cette idée et se retranscrirait
+bien dans le domaine de recherche de Michele Pagani.
+
+Sur le plan de la recherche, j'aimerais beaucoup étendre le sujet du calcul
+tensoriel et de ses approximations de rang faible au-delà de la programmation
+parallèle en mémoire partagée, jusque dans la mémoire distribuée. C'est
+pourquoi j'aimerais beaucoup collaborer avec Isabelle Guérin Lassous sur ce
+projet. Je pense qu'on pourrait également aborder le projet sur le stockage des
+matrices creuses en mémoire distribuée mais je n'ai pas encore creusé le sujet.
+
+J'aimerais préciser que les deux projets ont pour objectif d'être parallélisés
+et que, pour ce faire, je recommande d'utiliser un modèle \textit{task-based},
+ce qui amènera à gérer un \textit{directed acyclic graph} (DAG)
+comme dans les travaux de recherche de Loris Marchal.
+%% Lyon %%
+% \end{comment}
+
+\printbibliography[keyword=pdr]

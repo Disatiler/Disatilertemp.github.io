@@ -1,0 +1,380 @@
+\usepackage{graphicx}
+\usepackage{pgf,tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{fit}
+\usetikzlibrary{positioning}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{arrows}
+\usetikzlibrary{math}
+\usepackage{ifthen}
+\usepackage{etoolbox}
+\usepackage{tkz-euclide}
+
+%% Create a 3th-order tensor
+\tikzset{
+  %% Fonction to create a cube
+  cuboid/.pic={
+      \tikzset{%
+        every edge quotes/.append style={midway, auto},
+        /cuboid/.cd,
+        #1
+      }
+      %% Create face of tensor
+      \draw[every edge/.append style={pic actions, densely dashed,
+            opacity=.5}, pic actions]
+      (\oox,\ooy,\ooz) coordinate (o) -- ++(-\cubescale*\cubex,\ooy,\ooz)
+      coordinate (a) -- ++(\oox,-\cubescale*\cubey,\ooz) coordinate (b)
+      edge coordinate [pos=1] (g) ++(\oox,\ooy,-\cubescale*\cubez)  --
+      ++(\cubescale*\cubex,\ooy,\ooz) coordinate (c) -- cycle;
+      \draw [every edge/.append style={pic actions, densely dashed,
+            opacity=.5}, pic actions]
+      (o) -- ++(\oox,\ooy,-\cubescale*\cubez) coordinate (d) --
+      ++(\oox,-\cubescale*\cubey,\ooz) coordinate (e) edge (g) -- (c) -- cycle;
+      \draw [every edge/.append style={pic actions, densely dashed,
+            opacity=.5}, pic actions]
+      (o) -- (a) -- ++(\oox,\ooy,-\cubescale*\cubez) coordinate (f) edge (g) --
+      (d) -- cycle;
+
+      % Ordre des points [a o b c][f d g e]
+      \pgfextra{
+        \ifthenelse{\cubenotated=3}{
+          %% Legend of tensor with edge
+          %% A vérifier pourquoi ca bugg chez Théo!!
+          \path [every edge/.append style={pic actions, |-|}]
+          (b) +(\oox,-0.2pt+\ooy,\ooz) coordinate (b1) edge [below,"\lx"'] (b1
+          -| c)
+          (b) +(-.2pt+\oox,\ooy,\ooz) coordinate (b2) edge ["\ly"] (b2 |- a)
+          (c) +(0.1pt+\oox,-0.15pt+\ooy,\ooz) coordinate (c2) edge ["\lz"']
+          ([xshift=3.5pt,yshift=-3.5pt]e);
+          
+        }{
+          \ifthenelse{\cubenotated=2}{
+            %% Legend of tensor
+            \coordinate (c2) at ($(c)+(0.1+\oox,-0.1+\ooy,\ooz)$);
+            \coordinate (c3) at ($(c2)+(0.1,0,-\cubescale*\cubez*0.5)$);
+            \node[xshift=\cubescale*\cubex*0.5 cm, yshift = -0.2cm] at (b)
+            {\lx};
+            \node[xshift=-0.2cm, yshift=\cubey*\cubescale*0.5 cm] at (b) {\ly};
+            \node[] at (c3) {\lz};
+          }{}
+        }
+        %% Name of tensor
+        \node[anchor=center, scale=\cubex/10] at
+        (0.1+\oox,\ooy,\cubez*0.1+\ooz) {\g};
+      }
+    },
+  %% All parameters
+  /cuboid/.search also={/tikz},
+  /cuboid/.cd,
+  width/.store in=\cubex,
+  height/.store in=\cubey,
+  depth/.store in=\cubez,
+  units/.store in=\cubeunits,
+  scale/.store in=\cubescale,
+  nameG/.store in=\g,
+  originX/.store in=\oox,
+  originY/.store in=\ooy,
+  originZ/.store in=\ooz,
+  legendX/.store in=\lx,
+  legendY/.store in=\ly,
+  legendZ/.store in=\lz,
+  notated/.store in=\cubenotated,
+  %% Initialisation of parameters
+  width=10,
+  height=10,
+  depth=10,
+  units=cm,
+  scale=.1,
+  originX=0,
+  originY=0,
+  originZ=0,
+  legendX=\footnotesize{$m_1$},
+  legendY=\footnotesize{$m_2$},
+  legendZ=\footnotesize{$m_3$},
+  notated=1,
+  nameG=0,
+}
+
+%% Create a Tucker Tensor
+\tikzset{
+  tucker/.pic={
+      \tikzset{%
+        every edge quotes/.append style={midway, auto},
+        /tucker/.cd,
+        #1
+      }
+      \pic[] at (\ox,\oy,\oz) {\cube={width=10, height=10, depth=10,
+            units=\cubeunitss, scale=\cubescalee,
+            notated=\cubenotateddd, legendX=\lr, legendY=\lrr,
+            legendZ=\lrrr}};
+      % Ordre des points [a o b c][f d g e]
+      \tikzmath{
+        real \ax1, \ax2, \ay1, \ay2, \az1, \az2, \aux, \auy, \arx, \ary, \aix,
+        \aiy;
+        real \bx1, \bx2, \by1, \by2, \bz1, \bz2, \bux, \buy, \brx, \bry, \bix,
+        \biy;
+        real \cx1, \cx2, \cy1, \cy2, \cz1, \cz2, \cux, \cuy, \crx, \cry, \cix,
+        \ciy;
+        % Left factor coordinate
+        \bx1 = -0.5; \bx2 = -2; \bux= 0.8; \brx = 1.8; \bix = \bux;
+        \by1 = 0; \by2 = 1; \buy= -0.5; \bry= -0.5; \biy = 0.2;
+        \bz1 = 0; \bz2 = 0;
+        % Right factor coordinate
+        \ax1 = 0.7; \ax2 = 2; \aux= -0.8; \arx = -1.8; \aix = -0.7;
+        \ay1 = 0; \ay2 = 0; \auy= -0.2; \ary = -0.2; \aiy = 0.2;
+        \az1 = 1; \az2 = 0;
+        % Up/Down factor coordinate
+        \cx1 = 0; \cx2 = 1; \cux= -0.5; \crx = -0.5; \cix = 0.3;
+        \cy1 = -0.4; \cy2 = -1.7; \cuy= 0.7; \cry = 1.5; \ciy = 0.7;
+        \cz1 = -0; \cz2 = 0;
+        if \lfvert >= 1 then {%
+            \ax1 = -0.1; \ax2 = 0.9; \aux= -0.2; \arx = 0.2; \aix = 0.5;
+            \ay1 = 1; \ay2 = 1; \auy= 0.3; \ary = 0.8; \aiy = 0.3;
+            \az1 = 0.5; \az2 = 2;
+            % B factor coordinate
+            \bx1 = -0.5; \bx2 = -1.5; \bux= 0.5; \brx = 0.5; \bix = -0.2;
+            \by1 = 1; \by2 = -0.5; \buy= 0.7; \bry= -0.2; \biy = 0.7;
+            % C factor coordinate
+            \cx1 = 1.5; \cx2 = 3; \cux= -0.7; \crx = 0.2; \cix = -0.7;
+            \cy1 = 0; \cy2 = 1; \cuy= -0.5; \cry = -0.5; \ciy = 0.2;
+            \cz1 = -1; \cz2 = -1;
+            if \lfvert == 2 then {%
+                % B factor coordinate
+                \bx1 = -0.6; \bx2 = -0.6; \bux= 0.5; \brx = -0.2; \bix = 0.3;
+                \by1 = -0.4; \by2 = 0.6; \buy= -0.1; \bry= -0.5; \biy = 0.5;
+                \bz1 = 0; \bz2 = 2;
+              };
+          };
+      }
+
+      %Left factor
+      \draw[scale=\cubescalee*\cubey] ($(b)+(\bx1, \by1,\bz1)$) --
+      node[left]{} ($(b)+(\bx1,\by2,\bz1)$) -- coordinate(r1)
+      ($(b)+(\bx2, \by2,\bz2)$) -- ($(b)+(\bx2, \by1,\bz2)$) -- cycle;
+      \pgfextra{\ifthenelse{\cubenotateddd>0}{
+          \node[xshift=\bux cm, yshift=\buy cm] at (r1) {\nu};
+          \node[xshift=\bix cm, yshift=\biy cm] at (r1) {\lx};
+          \node[xshift=\brx cm, yshift=\bry cm] at (r1) {\lr};}{}
+      }
+      %Up/Down factor
+      \draw[scale=\cubescalee*\cubez] ($(b)+(\cx1, \cy1,\cz1)$) --
+      node[left]{} ($(b)+(\cx1,\cy2,\cz2)$) -- coordinate(r2)
+      ($(b)+(\cx2, \cy2,\cz2)$) -- ($(b)+(\cx2, \cy1,\cz1)$) -- cycle;
+      \pgfextra{\ifthenelse{\cubenotateddd>0}
+        {
+          \node[xshift=\cux cm, yshift=\cuy cm]at (r2) {\nuu};
+          \node[xshift=\cix cm, yshift=\ciy cm] at (r2) {\ly};
+          \node[xshift=\crx cm, yshift=\cry cm] at (r2) {\lrr};}{}
+      }
+      %Right factor
+      \draw[scale=\cubescalee*\cubex] ($(d)+(\ax1,\ay1,\az1)$) -- node[]{}
+      ($(d)+(\ax1,\ay2,\az2)$) -- coordinate(r3)
+      ($(d)+(\ax2, \ay2,\az2)$) -- ($(d)+(\ax2, \ay1,\az1)$) -- cycle;
+      \pgfextra{\ifthenelse{\cubenotateddd>0}{
+          \node[xshift=\aux cm, yshift=\auy cm] at (r3) {\nuuu};
+          \node[xshift=\aix cm, yshift=\aiy cm] at (r3) {\lz};
+          \node[xshift=\arx cm, yshift=\ary cm] at (r3) {\lrrr};
+          %\pgfextra{\ifthenelse{\lfvert=0}{
+          %    \tikzmath{\arx = 0.1; \ary = -0.3;}
+          %    \node[xshift=\arx cm, yshift=\ary cm] at (r3) {\lrrr};
+          %  }{}
+          %}
+        }{}
+      }
+    },
+  %% All parameters
+  /tucker/.search also={/tikz},
+  /tucker/.cd,
+  width/.store in=\cubex,
+  height/.store in=\cubey,
+  depth/.store in=\cubez,
+  units/.store in=\cubeunitss,
+  scale/.store in=\cubescalee,
+  nameG/.store in=\ga,
+  nameU1/.store in=\nu,
+  nameU2/.store in=\nuu,
+  nameU3/.store in=\nuuu,
+  originX/.store in=\ox,
+  originY/.store in=\oy,
+  originZ/.store in=\oz,
+  legendR/.store in=\lr,
+  legendR2/.store in=\lrr,
+  legendR3/.store in=\lrrr,
+  notated/.store in=\cubenotateddd,
+  cube/.store in=\cube,
+  lfvert/.store in=\lfvert,
+  %% Initialisation of parameters
+  width=10,
+  height=10,
+  depth=10,
+  units=cm,
+  scale=.1,
+  originX=0,
+  originY=0,
+  originZ=0,
+  legendR=\footnotesize{$R_1$},
+  legendR2=\footnotesize{$R_2$},
+  legendR3=\footnotesize{$R_3$},
+  notated=1,
+  cube=cuboid,
+  lfvert=0,
+  nameG=0,
+  nameU1=U1,
+  nameU2=U2,
+  nameU3=U3,
+}
+
+%% Create a Addition Tucker Tensor
+\tikzset{
+  addition tucker/.pic={
+      \tikzset{%
+        every edge quotes/.append style={midway, auto},
+        /tucker/.cd,
+        #1
+      }
+      \tikzmath{
+        real \ax1, \ax2, \ay1, \ay2, \az1, \az2, \aux, \auy, \arx, \ary, \aix,
+        \aiy;
+        real \bx1, \bx2, \by1, \by2, \bz1, \bz2, \bux, \buy, \brx, \bry, \bix,
+        \biy;
+        real \cx1, \cx2, \cy1, \cy2, \cz1, \cz2, \cux, \cuy, \crx, \cry, \cix,
+        \ciy;
+        % Left factor coordinate
+        \bx1 = -4; \bx2 = -2.5; \bux= -0.7; \brx = 0.3; \bix = \bux;
+        \by1 = -1; \by2 = 0; \buy= -0.5; \bry= -0.5; \biy = 0.2;
+        \bz1 = 0; \bz2 = 0;
+        % Right factor coordinate
+        \ax1 = 1.7; \ax2 = 3.2; \aux= -0.8; \arx = -2; \aix = -0.4;
+        \ay1 = 0.8; \ay2 = 0.8; \auy= -0.2; \ary = -0.2; \aiy = 0.6;
+        \az1 = 2; \az2 = 1;
+        % Up/Down factor coordinate
+        \cx1 = -2; \cx2 = -1; \cux= -0.5; \crx = -0.5; \cix = 1.2;
+        \cy1 = -2.4; \cy2 = -3.9; \cuy= 0.7; \cry = 1.7; \ciy = 0.7;
+        \cz1 = -0; \cz2 = 0;
+      }
+
+      %% Factors of G1
+      %Left factor
+      \coordinate (b) at (\ox,\oy\oz);
+      \coordinate (d) at (\ox,\oy\oz);
+      \draw[draw=green, scale=\cubescalee*\cubey] ($(b)+(\bx1, \by1,\bz1)$) --
+      node[left]{} ($(b)+(\bx1,\by2,\bz1)$) -- coordinate(r1)
+      ($(b)+(\bx2, \by2,\bz2)$) -- ($(b)+(\bx2, \by1,\bz2)$) -- cycle;
+      \pgfextra{\ifthenelse{\cubenotateddd>0}{
+          \node[xshift=\bux cm, yshift=\buy cm] at (r1) {\nu};
+          \node[xshift=\bix cm, yshift=\biy cm] at (r1) {\lx};
+          \node[xshift=\brx cm, yshift=\bry cm] at (r1) {\nr};}{}
+      }
+      %Up/Down factor
+      \draw[draw=green, scale=\cubescalee*\cubez] ($(b)+(\cx1, \cy1,\cz1)$) --
+      node[left]{} ($(b)+(\cx1,\cy2,\cz2)$) -- coordinate(r2)
+      ($(b)+(\cx2, \cy2,\cz2)$) -- ($(b)+(\cx2, \cy1,\cz1)$) -- cycle;
+      \pgfextra{\ifthenelse{\cubenotateddd>0}
+        {
+          \node[xshift=\cux cm, yshift=\cuy cm]at (r2) {\nuu};
+          \node[xshift=\cix cm, yshift=\ciy cm] at (r2) {\ly};
+          \node[xshift=\crx cm, yshift=\cry cm] at (r2) {\nrr};}{}
+      }
+      %Right factor
+      \draw[draw=green, scale=\cubescalee*\cubex] ($(d)+(\ax1,\ay1,\az1)$) -- node[]{}
+      ($(d)+(\ax1,\ay2,\az2)$) -- coordinate(r3)
+      ($(d)+(\ax2, \ay2,\az2)$) -- ($(d)+(\ax2, \ay1,\az1)$) -- cycle;
+      \pgfextra{\ifthenelse{\cubenotateddd>0}{
+          \node[xshift=\aux cm, yshift=\auy cm] at (r3) {\nuuu};
+          \node[xshift=\aix cm, yshift=\aiy cm] at (r3) {\lz};
+          \node[xshift=\arx cm, yshift=\ary cm] at (r3) {\nrrr};
+        }{}
+      }
+
+      %% Factors of G2
+      %Left factor
+      \draw[draw=blue, scale=\cubescalee*\cubey] ($(b)+(\bx1, \by1,\bz1)+(0,-1,0)$) --
+      node[left]{} ($(b)+(\bx1,\by2,\bz1)+(0,-1,0)$) -- coordinate(r1)
+      ($(b)+(\bx2, \by2,\bz2)+(0,-1,0)$) -- ($(b)+(\bx2, \by1,\bz2)+(0,-1,0)$)
+      -- cycle;
+      \pgfextra{\ifthenelse{\cubenotateddd>0}{
+          \node[xshift=\bux cm, yshift=\buy cm] at (r1) {\nuuuu};
+          \node[xshift=\brx cm, yshift=\bry cm] at (r1) {\nrrrr};}{}
+      }
+      %Up/Down factor
+      \draw[draw=blue, scale=\cubescalee*\cubez] ($(b)+(\cx1, \cy1,\cz1)+(1,0,0)$) --
+      node[left]{} ($(b)+(\cx1,\cy2,\cz2)+(1,0,0)$) -- coordinate(r2)
+      ($(b)+(\cx2, \cy2,\cz2)+(1,0,0)$) -- ($(b)+(\cx2, \cy1,\cz1)+(1,0,0)$) --
+      cycle;
+      \pgfextra{\ifthenelse{\cubenotateddd>0}
+        {
+          \node[xshift=\cux cm, yshift=\cuy cm]at (r2) {\nuuuuu};
+          \node[xshift=\crx cm, yshift=\cry cm] at (r2) {\nrrrrr};}{}
+      }
+      %Right factor
+      \draw[draw=blue, scale=\cubescalee*\cubex] ($(d)+(\ax1,\ay1,\az1)+(0,0,-1)$) -- node[]{}
+      ($(d)+(\ax1,\ay2,\az2)+(0,0,-1)$) -- coordinate(r3)
+      ($(d)+(\ax2, \ay2,\az2)+(0,0,-1)$) -- ($(d)+(\ax2, \ay1,\az1)+(0,0,-1)$) -- cycle;
+      \pgfextra{\ifthenelse{\cubenotateddd>0}{
+          \node[xshift=\aux cm, yshift=\auy cm] at (r3) {\nuuuuuu};
+          \node[xshift=\arx cm, yshift=\ary cm] at (r3) {\nrrrrrr};
+        }{}
+      }
+
+      \pic [] at (\ox,\oy,\oz) {\cube={width=\cubexx, height=\cubeyy,
+            depth=\cubezz, units=\cubeunitss, scale=\cubescalee, nameG=}};
+      \pic [draw=green] at (-1+\ox,\oy,\oz) {\cube={nameG=\gone,
+            units=\cubeunitss, scale=\cubescalee}};
+      \pic [draw=blue] at (\ox,-1+\oy,-1+\oz) {\cube={nameG=\gtwo,
+            units=\cubeunitss, scale=\cubescalee}};
+    },
+  %% All parameters
+  /tucker/.search also={/tikz},
+  /tucker/.cd,
+  width/.store in=\cubexx,
+  height/.store in=\cubeyy,
+  depth/.store in=\cubezz,
+  units/.store in=\cubeunitss,
+  scale/.store in=\cubescalee,
+  nameG/.store in=\g,
+  nameG1/.store in=\gone,
+  nameG2/.store in=\gtwo,
+  nameU1/.store in=\nu,
+  nameU2/.store in=\nuu,
+  nameU3/.store in=\nuuu,
+  nameU4/.store in=\nuuuu,
+  nameU5/.store in=\nuuuuu,
+  nameU6/.store in=\nuuuuuu,
+  nameR1/.store in=\nr,
+  nameR2/.store in=\nrr,
+  nameR3/.store in=\nrrr,
+  nameR4/.store in=\nrrrr,
+  nameR5/.store in=\nrrrrr,
+  nameR6/.store in=\nrrrrrr,
+  originX/.store in=\ox,
+  originY/.store in=\oy,
+  originZ/.store in=\oz,
+  cube/.store in=\cube,
+  lfvert/.store in=\lfvert,
+  %% Initialisation of parameters
+  width=20,
+  height=20,
+  depth=20,
+  units=cm,
+  scale=.1,
+  originX=0,
+  originY=0,
+  originZ=0,
+  cube=cuboid,
+  lfvert=0,
+  nameG=,
+  nameG1=$G_1$,
+  nameG2=$G_2$,
+  nameU1=$\mathbf{U}$,
+  nameU2=$\mathbf{V}$,
+  nameU3=$\mathbf{W}$,
+  nameU4=$\mathbf{U}'$,
+  nameU5=$\mathbf{V}'$,
+  nameU6=$\mathbf{W}'$,
+  nameR1=$r_1$,
+  nameR2=$r_2$,
+  nameR3=$r_3$,
+  nameR4=$r_4$,
+  nameR5=$r_5$,
+  nameR6=$r_6$,
+}

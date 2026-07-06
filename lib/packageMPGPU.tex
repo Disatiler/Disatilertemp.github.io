@@ -1,0 +1,12 @@
+\usepackage{listings}
+\usetikzlibrary{decorations.pathreplacing,calc}
+\newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
+\usepackage[linesnumbered]{algorithm2e}
+\usepackage{algorithmic}
+\usepackage{eqparbox}
+\renewcommand{\algorithmiccomment}[1]{\hfill\eqparbox{COMMENT}{\# #1}}
+\RestyleAlgo{ruled}
+\usepackage[colorlinks,linkcolor=blue]{hyperref}
+\usepackage[nameinlink]{cleveref}
+\SetKwInOut{Input}{Input}\SetKwInOut{Output}{Output}
+\usepackage[normalem]{ulem}

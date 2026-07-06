@@ -1,0 +1,72 @@
+\documentclass[a4paper, 10pt]{article}
+
+
+\usepackage[total={16cm, 22cm}]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+% \usepackage[french]{babel}
+\usepackage{polyglossia}
+\setmainlanguage{french}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{pifont}
+
+\usepackage{rotating}
+\usepackage{xcolor}
+\usepackage{titlesec}
+
+\newcommand{\secbox}[1]{{%
+  \setlength{\fboxsep}{5.4pt}%
+  \colorbox{#1}%
+    {\makebox[3em][c]{\color{white}\sffamily\rule[11.2pt]{0pt}{0pt}\thesection}}
+}}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries}{\secbox{black}}{1em}{}[{\titlerule[1pt]}]
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}{}{2pt}{}[{\titlerule[0.6pt]}]
+
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{footnote}
+\makesavenoteenv{tabular}
+
+\usepackage{subcaption}
+\usepackage{comment}
+\usepackage{hyperref}
+\usepackage{cleveref}
+
+\def\todo{\textcolor {red}{[TODO]}}
+\def\putref{\textcolor {red}{[REF]}}
+
+\makeatletter
+\newcommand\footnoteref[1]{\protected@xdef\@thefnmark{\ref{#1}}\@footnotemark}
+\makeatother
+
+\renewcommand{\_}{\texttt{\char`_}}
+
+\makeatletter
+\newcommand{\fakechap}[1]{{\noindent\normalfont\sectfont\nobreak\size@chapter{}#1\par}\chapterheadendvskip\noindent\ignorespaces}
+\makeatother
+
+\usepackage[acronym, nomain, toc, automake, symbols, nogroupskip, nonumberlist]{glossaries-extra}
+\input{lib/accro.tex}
+\input{lib/def.tex}
+
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{lib/bib/myrefbib.bib}
+
+\begin{document}
+
+\newgeometry{total = {17cm, 23cm}}
+
+\section{Curiculum Vitae}
+
+\input{sections/cv.tex}
+
+\pagebreak
+
+\end{document}

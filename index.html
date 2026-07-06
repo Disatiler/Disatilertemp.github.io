@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<nav class="menu">
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="publications.html">Publications</a></li>
+        <li><a href="CuriVite.pdf">CV</a></li>
+        <li><a href="teaching.html">Teaching</a></li>
+    </ul>
+</nav>
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +24,9 @@
         <link
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
             rel="stylesheet">
+
+        <!-- <script src="js/dark-mode.js"></script>
+        <link rel="stylesheet" href="style.css" /> -->
     </head>
 
     <body>
@@ -25,11 +37,13 @@
             <!-- HERO -->
             <!-- ========================= -->
 
+            <!-- <button data-theme-toggler>Changer de mode</button> -->
+
             <header class="hero">
 
-                <!-- <img src="images/profile.jpg"
+                <img src="images/Koma.png"
              alt="Portrait of Matthieu"
-             class="avatar"> -->
+             class="avatar">
 
                 <h1>Matthieu ROBEYNS</h1>
 
@@ -38,8 +52,8 @@
                 </p>
 
                 <p class="description">
-                    Numerical Linear Algebra • Tensor Methods • High Performance
-                    Computing • Mixed Precision Algorithms
+                    Numerical Linear Algebra • Tensor Methods • <br>
+                    High Performance Computing • Mixed Precision Algorithms
                 </p>
 
                 <div class="buttons">
@@ -52,9 +66,14 @@
                 Google Scholar
             </a> -->
 
+                    <a href="CuriVite.pdf"
+                        class="btn secondary">
+                        CV
+                    </a>
+
                     <a href="mailto:matthieu.robeyns@irit.fr"
                         class="btn secondary">
-                        matthieu.robeyns@irit.fr
+                        email : matthieu.robeyns@irit.fr
                     </a>
 
                     <a
@@ -107,8 +126,12 @@
 
                     I am currently a postdoctoral researcher at
                     <strong><a href="https://www.enseeiht.fr/fr/index.html">
-                            ENSEEIHT
-                        </a></strong> (Toulouse, France).
+                            Toulouse INP - ENSEEIHT
+                        </a></strong> 
+                    /<strong><a href="https://www.irit.fr/">
+                            IRIT
+                        </a></strong> 
+                    (Toulouse, France).
 
                 </p>
 
@@ -152,17 +175,16 @@
                 <ul>
 
                     <li>
+                        <strong>2026</strong> — Presented at Sparse Days 2026.
+                    </li>
+
+                    <li>
                         <strong>2026</strong> — Presented at SIAM PP26.
                     </li>
 
                     <li>
                         <strong>2025</strong> — Joined ENSEEIHT as Postdoctoral
                         Researcher.
-                    </li>
-
-                    <li>
-                        <strong>2025</strong> — Paper accepted in SIAM Journal
-                        on Scientific Computing.
                     </li>
 
                 </ul>
@@ -201,44 +223,6 @@
                 <article class="publication">
 
                     <h3>
-                        Mixed precision randomized low-rank approximation with
-                        GPU tensor cores
-                    </h3>
-
-                    <p>
-                        M. Baboulin,
-                        S. Donfack,
-                        O. Kaya,
-                        T. Mary,
-                        Matthieu
-                    </p>
-
-                    <p>
-                        <em>Euro-Par 2024</em>
-                    </p>
-
-                    <p>
-
-                        <a href="https://hal.science/LISN/hal-04520893v1">
-                            HAL
-                        </a>
-
-                        |
-
-                        <a
-                            href="https://link.springer.com/chapter/10.1007/978-3-031-69583-4_3">
-                            Springer
-                        </a>
-
-                    </p>
-
-                </article>
-
-                <hr>
-
-                <article class="publication">
-
-                    <h3>
                         Mixed precision iterative refinement for low-rank matrix
                         and tensor approximations
                     </h3>
@@ -272,22 +256,77 @@
 
                 </article>
 
+                <br>
+                <hr>
+
+                <article class="publication">
+
+                    <h3>
+                        Mixed precision randomized low-rank approximation with
+                        GPU tensor cores
+                    </h3>
+
+                    <p>
+                        M. Baboulin,
+                        S. Donfack,
+                        O. Kaya,
+                        T. Mary,
+                        Matthieu
+                    </p>
+
+                    <p>
+                        <em>Euro-Par 2024</em>
+                    </p>
+
+                    <p>
+
+                        <a href="https://hal.science/LISN/hal-04520893v1">
+                            HAL
+                        </a>
+
+                        |
+
+                        <a
+                            href="https://link.springer.com/chapter/10.1007/978-3-031-69583-4_3">
+                            Springer
+                        </a>
+
+                    </p>
+
+                </article>
+
             </section>
 
             <!-- ========================= -->
             <!-- TALKS -->
             <!-- ========================= -->
 
-            <section id="talks">
+            <section class="card" id="talks">
 
-                <h2>Talks</h2>
+                <h2>Main talks</h2>
 
                 <div class="project-grid">
 
                     <div class="project-card">
 
+                        <h3>SiamPP26 2026</h3>
+                        <h5>Berlin &mdash; March</h5>
+
+                        <p>
+                            A parallel approach for solving the Green’s function based on
+                            the nested-dissection and selected-inverse methods
+                        </p>
+
+                        <a href="Talks/2026_SiamPP26.pdf">
+                            Slides →
+                        </a>
+
+                    </div>
+
+                    <div class="project-card">
+
                         <h3>HPCSIM 2025</h3>
-                        <h5>Padova -- September</h5>
+                        <h5>Padova &mdash; September</h5>
 
                         <p>
                             Parallel Green's function solver using nested
@@ -303,7 +342,7 @@
                     <div class="project-card">
 
                         <h3>Euro-Par 2024</h3>
-                        <h5>Madrid -- August</h5>
+                        <h5>Madrid &mdash; August</h5>
 
                         <p>
                             Mixed precision randomized low-rank approximation
@@ -319,7 +358,7 @@
                     <div class="project-card">
 
                         <h3>SIAM LA 2024</h3>
-                        <h5>Paris -- May</h5>
+                        <h5>Paris &mdash; May</h5>
 
                         <p>
                             A general framework for the stable rounding of
@@ -395,61 +434,92 @@
 
                 <ul>
 
-                    <li> 2021 -- 2022 <br>
-                        L3 Programmation parallèle <br>
-                        <li> 2022 -- 2023 <br>
+                    <li> <u>2025 &mdash; 2026</u> <br>
+                        First year of engineering school - Calcul
+                        Scientifique <br>
+                        First year of engineering school - Projet
+                        Calcul Scientifique <br>
+                        <li> <u>2023 &mdash; 2024</u> <br>
+                            APP4 Polytech - Programmation parallèle <br>
+                            M1 IoT Programmation MPI <br>
+                        <li> <u>2022 &mdash; 2023</u> <br>
                             M1 QDCS Calcul haute performance <br>
                             M1 IoT Programmation MPI <br>
                             L3 Programmation parallèle <br>
-                            <li> 2023 -- 2024 <br>
-                                APP4 Polytech - Programmation parallèle <br>
-                                M1 IoT Programmation MPI <br>
-                            <li> 2025 -- 2026 <br>
-                                First year of engineering school - Calcul Scientifique <br>
-                                First year of engineering school - Projet Calcul Scientifique <br>
+                                <li> <u>2021 &mdash; 2022</u> <br>
+                                    L3 Programmation parallèle <br>
 
-                            </ul>
+                                </ul>
 
-                        <!-- </section> -->
+                                <!-- </section> -->
 
-                        <!-- ========================= -->
-                        <!-- SUPERVISION -->
-                        <!-- ========================= -->
+                                <!-- ========================= -->
+                                <!-- SUPERVISION -->
+                                <!-- ========================= -->
 
-                        <!-- <section class="card" id="supervision"> -->
+                                <!-- <section class="card" id="supervision"> -->
 
-                            <h2>Supervision</h2>
+                                <!-- <h2>Supervision</h2>
 
-                            <ul>
+                                <ul>
 
-                                <li>
+                                    <li>
 
-                                    M1 internship (2023):
-                                    Integration of MPLAPACK into Celeste for
-                                    mixed precision
-                                    simulations.
+                                        M1 internship (2023):
+                                        Integration of MPLAPACK into Celeste for
+                                        mixed precision
+                                        simulations.
 
-                                </li>
+                                    </li>
 
-                            </ul>
+                                </ul> -->
 
-                        </section>
+                            </section>
 
-                        <!-- ========================= -->
-                        <!-- FOOTER -->
-                        <!-- ========================= -->
+                            <section class="card" id="supervision">
+                                <h2>Supervision</h2>
 
-                        <footer>
+                                <ul>
 
-                            © 2026 Matthieu R.
+                                    <li>
 
-                            <br>
+                                        M1 internship (2023):
+                                        Integration of MPLAPACK into Celeste for
+                                        mixed precision
+                                        simulations.
 
-                            Last updated: June 2026
+                                    </li>
 
-                        </footer>
+                                </ul>
 
-                    </main>
+                            </section>
 
-                </body>
-            </html>
+                            <!-- ========================= -->
+                            <!-- FOOTER -->
+                            <!-- ========================= -->
+
+                            <footer>
+
+                                © 2026 Matthieu R.
+
+                                <br>
+                                <p>Last updated : <span id="date-actuelle"></span></p>
+                                <script>
+        // Récupère la date actuelle
+        const date = new Date();
+
+        // Formate la date en français (ex: 6 juillet 2026)
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const dateFormatee = date.toLocaleDateString('en-EN', options);
+
+        // Affiche la date dans l'élément HTML
+        document.getElementById('date-actuelle').textContent = dateFormatee;
+    </script>
+                                <!-- Last updated: June 2026 -->
+
+                            </footer>
+
+                        </main>
+
+                    </body>
+                </html>

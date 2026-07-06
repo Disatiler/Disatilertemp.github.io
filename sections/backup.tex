@@ -1,0 +1,35 @@
+Ma thèse propose une étude sur l'approximation de rang faible des matrices et
+des tenseurs. Plus précisément nous avons définis de nouveau algorithmes
+stables pour la décomposition de rang faibles pour les tenseurs. Et des
+méthodes de précisions mixtes pour accélérer les algorithmes en calculant en
+faibles précisions tout en atteignant une haute précision d'approximation.
+
+La gestion des données est souvent réalisée par des objets mathématiques tels
+que les matrices et les tenseurs, qui sont la généralisation des matrices à
+plus de deux dimensions. Certains domaines d'application nécessitent de stocker
+trop d'éléments, créant des tenseurs trop grands ; ce problème est connu sous
+le nom de \emph{curse of dimensionality}. Des méthodes mathématiques telles que
+les approximations de rang faible ont été développées pour réduire la
+dimensionnalité de ces objets malgré un coût très élevé en temps de calcul. De
+plus, de nouvelles architectures informatiques telles que les GPU nous
+permettent d'effectuer des calculs rapidement, notamment lors de calculs en
+faible précision. Combiner ces nouvelles architectures avec l'approximation de
+rang faible est une solution malgré la qualité des résultats altérée par la
+faible précision. Cette thèse vise à proposer des algorithmes d'approximation
+de rang faible stables en faible précision tout en conservant l'accélération
+inhérente au calcul en faible précision, ce qui est réalisable grâce au calcul
+en précision mixte.
+
+Nous avons développé une méthode générale d'approximation de tenseurs en
+précision mixte en calculant d'abord une approximation en faible précision et
+en l'affinant itérativement avec une précision supérieure pour maintenir la
+qualité du résultat. Sachant que cette accélération provient principalement des
+architectures GPU, plus précisément d'unités de calcul spécialisées appelées
+\emph{tensor cores}, nous avons développé une méthode générale d'approximation
+matricielle pour les architectures GPU en précision mixte utilisant ces
+\emph{tensor cores}. Notre méthode maintient la qualité du résultat, mais au
+prix d'une approximation de dimension supérieur à celle des applications
+standards. Pour compenser cet écart, des méthodes de recompression de dimension
+existent pour différents formats de tenseurs. Notre contribution finale propose
+un cadre pour l'analyse de stabilité des opérations de réseaux tenseurs
+communs, qui nous guide également vers une méthode de recompression stable.

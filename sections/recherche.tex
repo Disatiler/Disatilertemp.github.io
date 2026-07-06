@@ -1,0 +1,408 @@
+
+\noindent Durant mes années de recherche scientifique, j'ai principalement cherché à
+résoudre deux problématiques très récurrentes du calcul haute performance, à
+savoir l'accélération des calculs d'algèbre linéaire et la gestion de la
+mémoire des données. Sans l'optimisation de ces deux aspects, la
+résolution d'applications provenant d'autres domaines ne peut se faire,
+en particulier dans les domaines physiques, où les systèmes d'équations
+deviennent de plus en plus complexes.
+
+Pendant ma thèse, j'ai développé une méthode algorithmique itérative pour
+résoudre des approximations de rang faible sur des matrices. Afin de rendre
+cette méthode efficace en temps de calcul, j'ai défini l'algorithme de manière
+à ce qu'il s'exécute avec plusieurs précisions, le rendant ainsi applicable en
+précision mixte et sur diverses architectures telles que les GPU. Étant donné
+que la faible précision est généralement plus rapide que la haute précision,
+j'ai obtenu une nette accélération des calculs sur différentes architectures,
+notamment les CPU et les GPU.
+
+J'ai ensuite cherché à étendre cette approche aux tenseurs. Pour cela, j'ai
+d'abord implémenté un algorithme stable d'approximation de rang faible pour les
+tenseurs. Une fois cette étape réalisée, j'ai combiné ces deux contributions
+afin d'améliorer la gestion mémoire des tenseurs via leurs approximations de
+rang faible, tout en maintenant un coût de calcul très réduit.
+
+Dans la même thématique, mon travail de post-doctorant m'a permis de prendre
+conscience qu'un problème d'optimisation issu d'une application physique réelle
+ouvre de nombreuses perspectives de recherche. En effet, j'ai exploité la
+structure de la matrice donnée afin d'en extraire un algorithme parallèle très
+efficace, mobilisant des méthodes de parallélisation que je n'avais pas
+abordées auparavant.
+
+Je me suis ainsi détaché de l'étude du problème dans son contexte physique pour
+l'aborder davantage sous l'angle de la théorie des graphes, notamment à travers
+la parallélisation basée sur les tâches. Cette approche m'a permis de mettre en
+évidence une stratégie de parallélisation performante, en combinant plusieurs
+méthodes et en les implémentant à partir d'interfaces existantes, tout en
+tirant parti de leurs avantages et en tenant compte de leurs contraintes.
+
+\subsection{Thèse}
+
+\begin{itemize}
+    \item[\ding{118}~ Titre :] Mixed precision algorithms for low-rank matrix and tensor approximations
+          \begin{itemize}
+              \item[\ding{226}~ Directeur de thèse :] Marc Baboulin
+                    (\href{mailto:baboulin@lmf.cnrs.fr}{baboulin@lmf.cnrs.fr})
+              \item[\ding{226}~ Co-directeur de thèse :] Oguz Kaya
+                    (\href{mailto:oguz.kaya@universite-paris-saclay.fr}{oguz.kaya@universite-paris-saclay.fr}),\\
+                    Théo Mary (\href{mailto:theo.mary@lip6.fr}{theo.mary@lip6.fr})
+          \end{itemize}
+\end{itemize}
+
+\paragraph*{Résumé}\mbox{}\\
+
+Ma thèse propose une étude sur l'approximation de rang faible des matrices et
+des tenseurs. Plus précisément nous avons défini de nouveau algorithmes stables
+pour la décomposition de rang faible pour les tenseurs. Et des méthodes de
+précisions mixtes pour accélérer les algorithmes en calculant en faibles
+précisions tout en atteignant une haute précision d'approximation. Cette
+approche sert à résoudre les problèmes d'espaces apparaissant dans les
+tenseurs.
+
+La gestion des données est souvent réalisée par des objets mathématiques tels
+que les matrices et les tenseurs, qui sont la généralisation des matrices à
+plus de deux dimensions. Certains domaines d'application nécessitent de stocker
+trop d'éléments, créant des tenseurs trop grands ; ce problème est connu sous
+le nom de \emph{curse of dimensionality}. Des méthodes mathématiques telles que
+les approximations de rang faible ont été développées pour réduire la
+dimensionnalité de ces objets malgré un coût très élevé en temps de calcul. De
+plus, de nouvelles architectures informatiques telles que les GPU nous
+permettent d'effectuer des calculs rapidement, notamment lors de calculs en
+faible précision. Combiner ces nouvelles architectures avec l'approximation de
+rang faible est une solution malgré la qualité des résultats altérée par la
+faible précision. Ma thèse vise à proposer des algorithmes d'approximation de
+rang faible stables en faible précision tout en conservant l'accélération
+inhérente au calcul en faible précision, ce qui est réalisable grâce au calcul
+en précision mixte.
+
+Dans un premier temps, nous avons développé un algorithme d'approximation de
+rang faible pour les tenseurs basé sur CP-ALS mais en précision mixte. En effet
+sachant que la méthode CP-ALS est une méthode dite \textit{itérative}, cela
+implique qu'à chaque itération nous avons une approximation qui doit être
+meilleure que la précédente. Malheureusement, la non-convergence de la méthode
+rendait très compliqué l'analyse de l'impact de la précision mixte sur le
+résultat, on pouvait se demander si le résultat n'était pas plutôt dû à la seed
+ou bien au choix du rang.
+
+Alors pour s'assurer du bon fonctionnement de l'algorithme, j'ai pris un autre
+angle d'attaque en me concentrant plutôt sur les méthodes dites
+\textit{directes}. Donnant une approximation quasi-optimal et sans itérer,
+cette approche avec la faible précision m'a donné des résultats très concluants
+tel que montrés ci-dessous~\cref{fig.irlra}, et nous permet ainsi de définir la
+méthode comme \textit{raffinement itérative} d'approximation de rang faibles.
+Ce raffinement itératif s'exprime de la façon suivante,
+\begin{enumerate}
+    \item Calculer $\E = \X - \Decompress(\F)$ en haute précision
+          $\ueps$.\label{line.decompress}
+    \item If $\norm{\E} \le \eps\norm{\X}$, exit.\label{line.stop}
+    \item Calculer $\FE = \LRA(\E, \epsl)$ en faible précision $\ul$.\label{line.FE}
+    \item Calculer $\F = \Recompress(\F + \FE, \epsl^{i+1})$ en haute précision
+          $\ueps$.\label{line.recompress}
+\end{enumerate}
+et atteint la borne suivante
+\begin{equation}\label{eq.Fhat}
+    \norm{X-\Fhat} \le (\phi^{k+1} + \xi + O(\epsl\eps))\norm{X},
+\end{equation}
+après $k$ itérations avec $\phi = (1+b_1\tl)\epsl + (b_2+1)\theta\eps$ la
+vitesse de convergence et $\xi = \big(1+(b_2+b_3+2)\theta\big)\eps$ la
+précision atteignable (prouvé dans~\cite[Théoreme 2.1]{bkmr23}).
+
+La~\cref{graph.randSVD} représente la méthode sur une matrice Poisson (à
+gauche) et un tenseur d'une application (à droite). L'abscisse représente le
+nombre de \textit{raffinement itératif} qu'on fait pour atteindre la précision
+souhaitée (ici double-FP64) par rapport à l'erreur relative calculée en axe des
+ordonnées ainsi $\norm{A - \tilde{A}}/\norm{A}$. Chaque courbe représente la
+précision dans laquelle sont faits les calculs en faibles précision et le
+nombre indiqué à côté de chaque marqueur représente le rang obtenu. On constate
+bien la convergence de la méthode et ce peu importe la faible précision
+choisie, on constate aussi que le rang obtenu est équivalent à celui de la
+précision haute ce qui implique que la méthode comprime tout aussi bien qu'une
+approximation en haute précision.
+
+Cette bonne compression n'est pas trivialle car si on ne considère pas
+l'étape~\cref{line.recompress}, le rang peut être surestimé par un multiple de
+3. En effet, les calculs d'algèbre linéaire montrent que le rang sans
+recompression serait borné par
+\begin{align*}
+    \rank(\F+\F_\E)
+     & \le \rank(\F) + \rank(\F_\E)                                    \\
+     & = \rank(\F) + \rank(E,\epsl)                                    \\
+     & \le \rank(\X,\epsl^{i+1}/2) + 2\rank(\X,\epsl^i) \label{eq.rkF} \\
+     & \le 3\rank(\X,\eps).
+\end{align*}
+
+\begin{figure}[t!]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/RandSVD_Poisson_7_10_scale_4.pdf}
+        \caption{randSVD}
+        \label{graph.randSVD}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/Otensor_ttsvd_nd6_scale_2.pdf}
+        \caption{TT-SVD}
+        \label{graph.ttsvd}
+    \end{subfigure}
+    \caption{Résultat du \textit{raffinement itératif} sur une matrice Poisson avec RandSVD comme méthode d'approximation de range faible (à gauche);  et un tenseur d'application avec TT-SVD comme méthode (à droite).}
+    \label{fig.irlra}
+\end{figure}
+
+Ainsi on a taclé le problème de la \textit{curse of dimensionality} dans cette
+première contribution. Seulement le calcul d'approximation de rang faible est
+toujours très coûteux en temps surtout avec des matrices de grandes taille.
+Alors pour pallier à ce problème, j'ai appliqué les principes de méthodes
+randomisées avec toujours de la précision mixte pour accélérer les calculs et
+précisemment sur des architectures GPUs. La fusion de la randomisation avec la
+précision est applicable comme l'a démontré Ootomo et Yokota~cite{ooyo23}, mais
+seulement sur la matrice aléatoire. J'ai alors étendu l'analyse en appliquant
+la faible précision sur la multilplication entre la matrice originale et
+aléatoire et exploité des nouvelles unités de calculs, nommées \textit{tensor
+    cores}, pour faire des calculs en faible précision mais accumulées en haute
+précision. J'ai étudié différents scénarios de ce calcul comme le
+montre~\cref{graph.gemmGPU} puis j'ai constaté que le \textit{bottleneck}
+devenait la méthode d'approximation.
+
+Mais vouloir appliquer la faible précision sur la méthode d'approximation n'est
+pas pertinente car cela dégraderait trop le résultat, alors j'ai changé de
+noyau d'approximation en prenant une factorisation de Cholesky et ai conservé
+la haute précision car la différence de temps est négligeable entre les deux
+comme constaté dans~\cref{graph.cholQR}.
+
+\begin{figure}[t!]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/gemm_perf.pdf}
+        \caption{Performance de $\Omega * A$ en précision mixte.}
+        \label{graph.gemmGPU}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/cholQR_perf.pdf}
+        \caption{Performance HouseholderQR versus CholeskyQR.}
+        \label{graph.cholQR}
+    \end{subfigure}
+    % \caption{Résultat du \textit{raffinement itératif} sur une matrice Poisson avec RandSVD comme méthode d'approximation de range faible (à gauche);  et un tenseur d'application avec TT-SVD comme méthode (à droite).}
+    \label{fig.optiGPU}
+\end{figure}
+
+En combinant ces résultats avec le raffinement itératif, nous obtenons des
+résultats confortant l'apport de gain de la précision mixte sur des
+architectures récentes.
+
+\begin{figure}[t!]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/randSVD_perf_with_raf.pdf}
+        \caption{Performance.}
+        \label{graph.perfirGPU}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/randSVD_accuracy_with_raf.pdf}
+        \caption{Accuracy.}
+        \label{graph.accuracyirGPU}
+    \end{subfigure}
+    % \caption{Résultat du \textit{raffinement itératif} sur une matrice Poisson avec RandSVD comme méthode d'approximation de range faible (à gauche);  et un tenseur d'application avec TT-SVD comme méthode (à droite).}
+    \label{fig.irGPU}
+\end{figure}
+
+Pour faire la même contribution sur les tenseurs, il faut s'assurer que les
+algorithmes de recompressions sont stables et cela indépendamment du format
+traité. C'est pourquoi, j'ai fait une analyse de stabilité des opérations de
+réseaux de tenseurs nécessaire pour le raffinement itératif. Et à partir
+d'opérations stables j'ai défini une méthode de recompression stable,
+démontrées par l'analyse, bien que la composition d'opérations stables
+n'implique pas nécessairement un résultat stable~\cite{bnv21}. La comparaison
+avec les méthodes similaires, utilisant les gramians, montrent que nous sommes
+plus stables et que nous comprimons mieux qu'eux sur de faible précision.
+
+% Nous avons développé une méthode générale d'approximation de tenseurs en
+% précision mixte en calculant d'abord une approximation en faible précision et
+% en l'affinant itératifment avec une précision supérieure pour maintenir la
+% qualité du résultat. Sachant que cette accélération provient principalement des
+% architectures GPU, plus précisément d'unités de calcul spécialisées appelées
+% \emph{tensor cores}, nous avons développé une méthode générale d'approximation
+% matricielle pour les architectures GPU en précision mixte utilisant ces
+% \emph{tensor cores}. Notre méthode maintient la qualité du résultat, mais au
+% prix d'une approximation de dimension supérieur à celle des applications
+% standards. Pour compenser cet écart, des méthodes de recompression de dimension
+% existent pour différents formats de tenseurs. Notre contribution finale propose
+% un cadre pour l'analyse de stabilité des opérations de réseaux tenseurs
+% communs, qui nous guide également vers une méthode de recompression stable.
+
+\paragraph*{Mots-clés :} Calcul en précision mixte, Calcul haute performance, Calcul tensoriel, Réduction de données.
+
+\subsection{Publications}
+
+\paragraph*{Conférences internationales}\mbox{}\\[5pt]
+Marc Baboulin, Simplice Donfack, Oguz Kaya, Théo Mary, and \underline{\bfseries Matthieu Robeyns}.
+Mixed precision randomized low-rank approximation with GPU tensor cores.
+In \textit{Mixed precision randomized low-rank approximation with GPU tensor cores}.
+Proceedings of the Euro-PAR 2024 Conference, Lecture Notes in Computer Science, Springer, Vol. 14803, pp. 31-44 (2024),
+\href{https://hal.science/LISN/hal-04520893v1}{Link paper.}
+\mbox{}\\[10pt]
+
+\noindent
+Marc Baboulin, Oguz Kaya, Théo Mary, and \underline{\bfseries Matthieu Robeyns}.
+In \textit{Mixed precision iterative refinement for low-rank matrix and tensor approximations.}
+Lecture Notes in SIAM Journal on Scientific Computing, Vol. 47, Iss. 5 (2025), pp. A2403-C1171
+\href{https://hal.science/hal-04115337v1/file/Paper.pdf}{Link paper}.
+\mbox{}\\[10pt]
+
+\noindent
+Marc Baboulin, Oguz Kaya, Théo Mary, and \underline{\bfseries Matthieu Robeyns}.
+In \textit{Numerical stability of tree tensor network operations, and a stable rounding algorithm.}
+Lecture Notes in SIAM Journal on SIMAX [Under review]
+\href{https://hal.science/hal-04996127}{Link paper}.
+\mbox{}\\[10pt]
+
+\paragraph*{Présentations internationales}\mbox{}\\[5pt]
+Marc Baboulin, Oguz Kaya, Théo Mary, and \underline{\bfseries Matthieu Robeyns}.
+In \textit{SIAM CSE, Amsterdam, Feburary 2023} - Mixed Precision Iterative Refinement for Low-Rank Matrix and Tensor Approximations.
+\mbox{}\\[10pt]
+
+\noindent
+Marc Baboulin, Oguz Kaya, Théo Mary, and \underline{\bfseries Matthieu Robeyns}.
+In \textit{Euro-PAR, Madrid, August 2024} - Mixed precision randomized low-rank approximation with GPU tensor cores.
+\mbox{}\\[10pt]
+
+\noindent
+Marc Baboulin, Oguz Kaya, Théo Mary, and \underline{\bfseries Matthieu Robeyns}.
+In \textit{HPCSIM, Padova, September 2025} - A parallel approach for solving the Green's function based on the nested-dissection a and selected-inverse methods.
+\mbox{}\\[10pt]
+
+\paragraph*{Présentation nationale}\mbox{}\\[5pt]
+Marc Baboulin, Oguz Kaya, Théo Mary, and \underline{\bfseries Matthieu Robeyns}.
+In \textit{SIAM LA, Paris, May 2024} - A general framework for the stable rounding of low-rank tensors with error analysis.
+\mbox{}\\[10pt]
+
+\subsection{Projet EoCoE-III (Post-doctorat)}
+
+Je suis, depuis Janvier 2025, Post-Doctorant à l'ENSEEITH Toulouse, dans
+l'équipe APO. Je travaille sur le projet
+\href{https://www.eurohpc-ju.europa.eu/research-innovation/our-projects/eocoe-iii_en}{EuroHPC
+    EoCoE-III}, mené par trois pays d'Europe : la France, l'Allemagne et l'Italie.
+Ce projet vise à utiliser les supercalculateurs européens pour les analyses de
+transports de particules, permettant ainsi la génération de nouveaux circuits
+quantiques. Les nouveaux circuits étant trop coûteux en ressources mémoire et
+en temps, mon objectif au sein du projet est d'optimiser les algorithmes et les
+calculs mathématiques via des architectures très performantes, récentes.
+
+% Alors pour extraire du parallélime, je dois me ramener à une approche à base de
+% graph et penser à permuter les blocks de façon efficace. Cette idée provient de
+% la \textit{nested dissection} qui me permet ainsi de parallélisé le problème à
+% un certains niveau souhaité. En contrepartie de cette parallélisation,
+% j'augmente le nombre de calculs par un effet de \textit{fill-in} que je peux
+% contrôler sachant que la matrice étudié est tridiagonal.
+
+% L'optimisation est aussi présente au sein des calculs
+% employé dans les algorithmes et de comment rendre plus abordables des calculs
+% d'inverses de matrices sur ordinateurs (via l'algèbre linéaire). La
+% contribution va mener à un papier prévu pour cette année.
+
+\subsubsection*{Résumé}
+
+L'application vise à résoudre la~\gls{negf}~\cite{sch61} équation possédant
+deux inconnus $G^r$ et $G^n$. $G^r$ provient de la Dyson équation et peut
+synthétiquement s'écrire comme $T G^r = I$ où $T$ est une matrice tridiagonale
+par bloc et $I$ la matrice identité. Sachant que calculer $G^r = T^{-1}$
+produit une matrice dense (ce qui n'est pas convenable), une solution fût de
+calculer une approximation de $T^{-1}$ en tirant avantages de la structure
+tridiagonal de la matrice $T$.
+
+Un moyen de rendre le problème moins complexe est de commencer par le
+factoriser, puis de calculer l'inverse de ces facteurs. J'optimise la méthode
+en profitant de la structure tridiagonale du problème afin de ramener le calcul
+de l'inverse à une \textit{selected inverse}~\cite{lyml11}, consistant à ne
+calculer que les blocs non nuls de l'inverse en utilisant uniquement les blocs
+non nuls. Ainsi, on évite des calculs inutiles ainsi que des surcoûts en
+mémoire. Comme dans ma thèse, le solveur reste toutefois coûteux en temps de
+calcul et purement séquentiel en raison de la dépendance entre les blocs
+diagonaux.
+
+% L'algorithme utilisé permettant ceci est la~\gls{si}~\cite{lyml11} qui
+% n'utilise uniquement les blocs non nuls pour calculer uniquement l'inverse des
+% blocs de la matrice $T$; qu'on factorise au préalable pour une meilleure
+% efficacité. Bien que l'algorithme soit efficace, celui-ci reste limité par son
+% exécution purement séquentielle.
+
+Alors, la seconde contribution fût de paralléliser la méthode en ajoutant une
+couche d'abstraction par la méthode de dissection emboitée
+(~\gls{nd}\cite{george73}). Cette approche consiste à subdiviser la matrice en
+plusieurs domaines de calcul au moyen d'une permutation de blocs spécifiques,
+appelés séparateurs (e.g. \textit{separators}). Ainsi, une bonne scalabilité
+peut être atteinte, malgré un surcoût de calcul induit par la permutation de la
+matrice ; ce phénomène est appelé l'effet de remplissage (e.g.,
+\textit{fill-in} effect). Afin de minimiser le taux de remplissage, une autre
+stratégie de parallélisation a été utilisée, elle consiste à diviser les blocs
+de la matrice en plus petits blocs, nommés tuiles (e.g. \textit{tiles}) donnant
+accès à une plus petite granularité des calculs. Cette méthode nommée
+\textit{block splitting}~\cite{pabo14} peut aussi être assemblée avec
+la~\gls{nd} pour maximiser la charge de calcul en fonction de l'architecture
+utilisée. La~\cref{graph.methodPostDoc} illustre les différentes méthodes
+employées pour calculer l'inverse de la matrice $T$, présentées de haut en bas.
+
+Afin d'exploiter efficacement ces deux méthodes de parallélisation,
+l'utilisation conjointe des modèles \textit{task-based} et \textit{sequential
+    task flow} s'avère particulièrement adaptée. Elle permet de générer du code
+parallèle avec peu de modifications du code séquentiel, tout en assurant un
+contrôle explicite des dépendances entre les tâches. L'exécution des
+algorithmes peut désormais être représentée sous forme d'arbres binaires,
+parcourus dans un sens pour la factorisation et dans l'autre pour le calcul de
+l'inverse. La~\cref{fig.daglu} illustre l'arbre de factorisation pour deux
+niveaux de dissection emboîtée, où chaque couleur correspond à un noyau de
+calcul utilisé dans l'algorithme. Il convient de noter que le chemin critique
+de cet arbre correspond toujours à l'une des branches les plus internes.
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/postDocResume.png}
+        \caption{Différentes méthodes appliqué sur la matrice d'étude $A$ (à gauche) pour trouver son inverse (à droite).}
+        \label{graph.methodPostDoc}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/Daglu.png}
+        \caption{Directed acyclic graph (DAG) de la factorisation LU de la matrice $T$.}
+        \label{fig.daglu}
+    \end{subfigure}
+    \caption{Modélisation du calcul de l'inverse (à gauche) et du graphe des tâches (à droite).}
+\end{figure*}
+
+L'implémentation fût initialement faite en \textbf{Julia}, mais un souci de
+surcoût dans la librairie
+\textbf{Dagger}~\href{https://juliaparallel.org/Dagger.jl/stable/}{$^{[dagger]}$}
+a fait basculer l'implémentation dans le langage \textbf{C} avec les librairies
+\textbf{Chameleon}~\href{https://solverstack.gitlabpages.inria.fr/chameleon/}{$^{[cham]}$}
+et \textbf{StarPU}\href{https://starpu.gitlabpages.inria.fr/}{$^{[starpu]}$}
+pour le solver et l'ordonnancement, respectivement. Une intégration avec la
+bibliothèque
+\textbf{libNEGF}~\href{https://github.com/libnegf/libnegf}{$^{[negf]}$} codée en
+\textbf{Fortran} est prévue d'ici la fin de l'année.
+
+\begin{figure}[t!]
+    \centering
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/plot_heat_dgetri_nd_time.pdf}
+        \caption{Nested dissection.}
+        \label{fig.perfND}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{fig/plot_time_subcut.pdf}
+        \caption{Nested dissection + Block splitting.}
+        \label{fig.perfNDBS}
+    \end{subfigure}
+    \caption{Performances des deux méthodes étudiées pendant le projet.}
+    \label{fig.perfPD}
+\end{figure}
+
+Les epxériences faites sur un cluster de l'Inria Bordeaux nommé
+\textbf{PlaFRIM}~\href{https://www.plafrim.fr/}{$^{[plafrim]}$} nous ont permis
+de générer des résultats sur les performances de la nested
+dissection~\cref{fig.perfND} et de la nested dissection combinée avec le block
+splitting~\cref{fig.perfNDBS}.
+% Les résultats de ce projet sont pour des architectures homogènes ou hétérogènes
+% (CPU/GPU) et utilisent majoritairement des opérations de type
+% BLAS-3~\href{https://www.netlib.org/blas/}{$^{[blas]}$} optimal pour ces
+% architectures et on était testé sur un cluster de l'Inria Bordeaux nommé
+% \textbf{PlaFRIM}~\href{https://www.plafrim.fr/}{$^{[plafrim]}$}.
+
+\printbibliography[keyword=recherche]
