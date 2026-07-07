@@ -311,7 +311,7 @@ footer {
     position: fixed;
     top: 20px;
     left: 50%;
-    transform: translateX(100%);
+    transform: translateX(110%);
 }
 
 /* .menu {
@@ -343,4 +343,404 @@ footer {
 
 .menu a:hover {
     background: #555;
+}
+
+::selection{
+    background: #ff9e4f;
+}
+
+::-moz-selection{
+    background: #ff9e4f;
+}
+
+a:link {
+  color: green;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: pink;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: red;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: yellow;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.menu_left {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(0%);
+}
+
+.menu_left a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    background: #141e22;
+    color: white;
+    border-radius: 6px;
+}
+
+#teaching > ul {
+    padding-left: 0;
+    list-style: none;
+}
+
+#teaching > ul > li {
+    margin-bottom: 1rem;
+}
+
+#teaching > ul > li > ul {
+    padding-left: 2rem;
+    margin-top: 0.5rem;
+}
+
+#supervision ul {
+    padding-left: 2rem;   /* indentation */
+}
+
+#supervision li {
+    margin-bottom: 1em;   /* espace entre les années */
+}
+
+#news ul {
+    padding-left: 2rem;   /* indentation */
+}
+
+#news li {
+    margin-bottom: 1em;   /* espace entre les années */
+}
+
+
+.teaching-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+}
+
+.teaching-table th,
+.teaching-table td {
+    border: 1px solid lightgreen;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+}
+
+.teaching-table thead {
+    background-color: green;
+}
+
+.teaching-table th {
+    font-weight: bold;
+}
+
+h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.navbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:1rem 3rem;
+    border-bottom:1px solid #ddd;
+}
+
+.navbar ul{
+    display:flex;
+    gap:2rem;
+    list-style:none;
+    margin:0;
+    padding:0;
+}
+
+.logo{
+    font-size:1.5rem;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+/* ==========================================================
+   RESET
+========================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ==========================================================
+   VARIABLES
+========================================================== */
+
+:root {
+    --bg: #141e22;
+    --surface: #292f39;
+    --surface-hover: #323846;
+
+    --text: #f3f4f6;
+    --muted: #a8afb8;
+    --accent: #ff9e4f;
+
+    --border: #3b4350;
+
+    --radius: 14px;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .30);
+
+    --max-width: 900px;
+}
+
+/* ==========================================================
+   GLOBAL
+========================================================== */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Inter", Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color .2s ease;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================================
+   NAVBAR
+========================================================== */
+
+.navbar {
+    display: fixed;
+    justify-content: space-between;
+    align-items: center;
+
+    max-width: var(--max-width);
+    margin: 0 auto;
+
+    padding: 1.5rem 0;
+}
+
+.navbar ul {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.logo {
+    color: var(--text);
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.logo:hover {
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav-links a {
+    color: var(--muted);
+}
+
+.nav-links a:hover {
+    color: white;
+}
+
+/* ==========================================================
+   MAIN CONTAINER
+========================================================== */
+
+.container {
+    width: min(92%, var(--max-width));
+    margin: auto;
+    padding: 2rem 0 5rem;
+}
+
+/* ==========================================================
+   CARD
+========================================================== */
+
+.card {
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    padding: 2.5rem;
+
+    box-shadow: var(--shadow);
+}
+
+/* ==========================================================
+   TITLES
+========================================================== */
+
+h1 {
+    font-size: 2.4rem;
+    margin-bottom: 0.8rem;
+    color: orange;
+}
+
+.intro {
+    color: var(--muted);
+    margin-bottom: 3rem;
+}
+
+/* ==========================================================
+   PUBLICATION YEARS
+========================================================== */
+
+.publication-year {
+    margin-top: 3rem;
+}
+
+.publication-year:first-of-type {
+    margin-top: 0;
+}
+
+.publication-year h2 {
+    color: var(--accent);
+
+    margin-bottom: 1.5rem;
+    padding-bottom: .5rem;
+
+    border-bottom: 1px solid var(--border);
+}
+
+/* ==========================================================
+   PUBLICATION
+========================================================== */
+
+.publication {
+    padding: 1.5rem 0;
+}
+
+.publication:not(:last-child) {
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.publication h3 {
+    font-size: 1.15rem;
+    margin-bottom: .6rem;
+}
+
+.authors {
+    color: var(--muted);
+    margin-bottom: .4rem;
+}
+
+.journal {
+    font-style: italic;
+    margin-bottom: .8rem;
+}
+
+.links {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+
+    flex-wrap: wrap;
+}
+
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+footer {
+    text-align: center;
+    color: var(--muted);
+
+    padding: 2rem 0;
+}
+
+/* ==========================================================
+   SELECTION
+========================================================== */
+
+::selection {
+    background: var(--accent);
+    color: white;
+}
+
+/* ==========================================================
+   SCROLLBAR
+========================================================== */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #101418;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #46505f;
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .card {
+        padding: 1.75rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .publication h3 {
+        font-size: 1.05rem;
+    }
+
 }
