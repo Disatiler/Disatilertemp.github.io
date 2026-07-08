@@ -1,0 +1,25 @@
+# Files no commited
+*.DS_Store
+*.aux
+*.bbl
+*.log
+*.synctex.gz
+*.synctex*
+*.thm
+*.lof
+*.lot
+*.out
+*.toc
+*.bcf
+*.xml
+*.blg
+*.loa
+main.pdf
+AnswerToAnthony.pdf
+main.bbl-SAVE-ERROR
+*.acn
+*.glo
+*.ist
+*.acr
+*.idx
+*.alg
